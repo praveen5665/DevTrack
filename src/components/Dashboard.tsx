@@ -6,6 +6,7 @@ import { MetricsWidget } from "@/components/MetricsWidget";
 import { TaskForm } from "@/components/TaskForm";
 import { TaskBoard } from "@/components/TaskBoard";
 import { FocusTimer } from "@/components/FocusTimer";
+import { DarkModeToggle } from "@/components/DarkModeToggle";
 import { ListTodo, Clock, Timer } from "lucide-react";
 
 type Tab = "today" | "all" | "timer";
@@ -22,6 +23,7 @@ export function Dashboard() {
             Personal productivity dashboard
           </p>
         </div>
+        <DarkModeToggle />
       </header>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v as Tab)}>

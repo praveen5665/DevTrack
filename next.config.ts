@@ -1,11 +1,15 @@
 import type { NextConfig } from "next";
 
+const isExport = process.env.NODE_ENV === "production";
+
 const nextConfig: NextConfig = {
-  output: "export",
-  // If deploying to <username>.github.io/<repo-name>, uncomment and set:
-  basePath: "/DevTrack",
-  assetPrefix: "/DevTrack/",
-  images: { unoptimized: true },
+  ...(isExport && {
+    output: "export",
+    images: { unoptimized: true },
+    // If deploying to <username>.github.io/<repo-name>, uncomment:
+    // basePath: "/repo-name",
+    // assetPrefix: "/repo-name/",
+  }),
 };
 
 export default nextConfig;
