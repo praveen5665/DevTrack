@@ -3,8 +3,8 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   output: "export",
   // If deploying to <username>.github.io/<repo-name>, uncomment and set:
-  // basePath: "/repo-name",
-  // assetPrefix: "/repo-name/",
+  basePath: "/DevTrack",
+  assetPrefix: "/DevTrack/",
   images: { unoptimized: true },
 };
 
