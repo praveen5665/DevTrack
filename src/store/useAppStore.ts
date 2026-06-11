@@ -15,6 +15,7 @@ export interface Task {
   status: Status;
   date: number;
   createdAt: number;
+  order?: number;
 }
 
 export interface StudySession {
@@ -27,11 +28,12 @@ export interface StudySession {
 export interface AppState {
   tasks: Task[];
   sessions: StudySession[];
-  addTask: (task: Omit<Task, "id" | "createdAt">) => void;
+  addTask: (task: Omit<Task, "id" | "createdAt" | "order">) => void;
   updateTaskStatus: (id: string, status: Status) => void;
   updateTaskDate: (id: string, date: number) => void;
   updateTask: (id: string, data: Partial<Omit<Task, "id" | "createdAt">>) => void;
   deleteTask: (id: string) => void;
+  reorderTasks: (updates: { id: string; status?: Status; order?: number }[]) => void;
   logSession: (session: Omit<StudySession, "id" | "completedAt">) => void;
 }
 
@@ -50,6 +52,7 @@ export const useAppStore = create<AppState>()(
           id: crypto.randomUUID(),
           date: task.date,
           createdAt: Date.now(),
+          order: Date.now(),
         },
       ],
     })),
@@ -73,6 +76,19 @@ export const useAppStore = create<AppState>()(
     set((state) => ({
       tasks: state.tasks.filter((t) => t.id !== id),
     })),
+
+  reorderTasks: (updates) =>
+    set((state) => {
+      const updated = [...state.tasks];
+      for (const u of updates) {
+        const idx = updated.findIndex((t) => t.id === u.id);
+        if (idx !== -1) {
+          if (u.status !== undefined) updated[idx] = { ...updated[idx], status: u.status };
+          if (u.order !== undefined) updated[idx] = { ...updated[idx], order: u.order };
+        }
+      }
+      return { tasks: updated };
+    }),
 
       logSession: (session) =>
         set((state) => ({

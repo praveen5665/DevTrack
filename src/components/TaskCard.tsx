@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useAppStore, type Task, type Status } from "@/store/useAppStore";
-import { isToday, dateToInputValue, inputValueToDate, formatDate } from "@/lib/utils";
+import { cn, isToday, dateToInputValue, inputValueToDate, formatDate } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -46,12 +46,31 @@ export function TaskCard({ task }: TaskCardProps) {
   const deleteTask = useAppStore((s) => s.deleteTask);
   const [editingDate, setEditingDate] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   const taskDate = task.date ?? task.createdAt;
   const isTaskToday = isToday(taskDate);
 
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData("text/plain", task.id);
+    e.dataTransfer.effectAllowed = "move";
+    setIsDragging(true);
+  };
+
+  const handleDragEnd = () => {
+    setIsDragging(false);
+  };
+
   return (
-    <div className="group flex flex-col gap-1.5 rounded-lg border bg-card p-3 text-sm transition-colors hover:border-foreground/20">
+    <div
+      draggable="true"
+      onDragStart={handleDragStart}
+      onDragEnd={handleDragEnd}
+      className={cn(
+        "group flex flex-col gap-1.5 rounded-lg border bg-card p-3 text-sm transition-colors hover:border-foreground/20",
+        isDragging && "opacity-50",
+      )}
+    >
       <div className="font-medium">{task.title}</div>
 
       <div className="flex flex-wrap items-center gap-1.5">
