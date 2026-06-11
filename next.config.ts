@@ -7,8 +7,8 @@ const nextConfig: NextConfig = {
     output: "export",
     images: { unoptimized: true },
     // If deploying to <username>.github.io/<repo-name>, uncomment:
-    // basePath: "/repo-name",
-    // assetPrefix: "/repo-name/",
+    basePath: "/DevTrack",
+    assetPrefix: "/DevTrack/",
   }),
 };
 
