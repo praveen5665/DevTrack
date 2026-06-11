@@ -1,36 +1,54 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# DevTrack
+
+A personal productivity dashboard for tracking tasks and focus sessions. Built with Next.js, Zustand, and Tailwind CSS. All data is stored locally in the browser via `localStorage`.
+
+## Features
+
+- **Task Management** — Add, edit, delete, and organize tasks with category (DSA, LLD, System Design, Fundamentals, Project), priority (P1–P4), and a scheduled date.
+- **Kanban Board** — Tasks are grouped into To Do, In Progress, and Done columns with priority ordering.
+- **Focus Timer** — Pomodoro-style timer (25/50 min presets) with an optional task link. Sessions are automatically logged on completion.
+- **Metrics** — Daily snapshot of tasks completed and focus minutes logged.
+- **Persistence** — All data survives page refreshes via Zustand's `persist` middleware writing to `localStorage`.
 
 ## Getting Started
 
-First, run the development server:
-
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Build
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+```
 
-## Learn More
+Produces a static export in `out/`.
 
-To learn more about Next.js, take a look at the following resources:
+## Deploy to GitHub Pages
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. Push this repo to GitHub.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+2. In `next.config.ts`, uncomment and set `basePath` and `assetPrefix` to match your repository name:
 
-## Deploy on Vercel
+   ```ts
+   basePath: "/your-repo-name",
+   assetPrefix: "/your-repo-name/",
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Go to your repo **Settings > Pages**. Under **Source**, select **GitHub Actions**.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. Push to the `main` branch. The workflow in `.github/workflows/deploy.yml` will build and deploy automatically.
+
+Your site will be live at `https://<username>.github.io/<repo-name>/`.
+
+## Tech Stack
+
+- Next.js (App Router) — static export
+- TypeScript
+- Tailwind CSS v4
+- Zustand (state management + persist middleware)
+- shadcn/ui (component library)
+- Lucide Icons
