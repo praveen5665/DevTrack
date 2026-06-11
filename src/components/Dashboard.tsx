@@ -54,7 +54,7 @@ export function Dashboard() {
           <TaskBoard filter="all" />
         </TabsContent>
 
-        <TabsContent value="timer" className="mt-8">
+        <TabsContent value="timer" className="mt-8" keepMounted>
           <FocusTimer />
         </TabsContent>
       </Tabs>

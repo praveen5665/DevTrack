@@ -14,7 +14,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { EditTaskDialog } from "@/components/EditTaskDialog";
-import { Trash2, Calendar, Pencil } from "lucide-react";
+import { Trash2, Calendar, Pencil, Timer } from "lucide-react";
 
 const categoryColors: Record<Task["category"], string> = {
   DSA: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800",
@@ -44,6 +44,12 @@ export function TaskCard({ task }: TaskCardProps) {
   const updateTaskStatus = useAppStore((s) => s.updateTaskStatus);
   const updateTaskDate = useAppStore((s) => s.updateTaskDate);
   const deleteTask = useAppStore((s) => s.deleteTask);
+  const focusMinutes = useAppStore(
+    (s) =>
+      s.sessions
+        .filter((sess) => sess.taskId === task.id)
+        .reduce((sum, sess) => sum + sess.durationMinutes, 0),
+  );
   const [editingDate, setEditingDate] = useState(false);
   const [editOpen, setEditOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -113,32 +119,42 @@ export function TaskCard({ task }: TaskCardProps) {
         </Button>
       </div>
 
-      {editingDate ? (
-        <Input
-          type="date"
-          defaultValue={dateToInputValue(taskDate)}
-          className="h-6 w-32 text-xs"
-          onBlur={(e) => {
-            if (e.target.value) {
-              updateTaskDate(task.id, inputValueToDate(e.target.value));
-            }
-            setEditingDate(false);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") e.currentTarget.blur();
-            if (e.key === "Escape") setEditingDate(false);
-          }}
-          autoFocus
-        />
-      ) : (
-        <button
-          onClick={() => setEditingDate(true)}
-          className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-muted transition-colors w-fit"
-        >
-          <Calendar className="size-3" />
-          {isTaskToday ? "Today" : formatDate(taskDate)}
-        </button>
-      )}
+      <div className="flex flex-wrap items-center gap-1.5">
+        {editingDate ? (
+          <Input
+            type="date"
+            defaultValue={dateToInputValue(taskDate)}
+            className="h-6 w-32 text-xs"
+            onBlur={(e) => {
+              if (e.target.value) {
+                updateTaskDate(task.id, inputValueToDate(e.target.value));
+              }
+              setEditingDate(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") e.currentTarget.blur();
+              if (e.key === "Escape") setEditingDate(false);
+            }}
+            autoFocus
+          />
+        ) : (
+          <button
+            onClick={() => setEditingDate(true)}
+            className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-muted transition-colors w-fit"
+          >
+            <Calendar className="size-3" />
+            {isTaskToday ? "Today" : formatDate(taskDate)}
+          </button>
+        )}
+        {focusMinutes > 0 && (
+          <span className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground">
+            <Timer className="size-3" />
+            {focusMinutes >= 60
+              ? `${Math.floor(focusMinutes / 60)}h ${focusMinutes % 60}m`
+              : `${focusMinutes}m`}
+          </span>
+        )}
+      </div>
 
       <EditTaskDialog
         task={task}

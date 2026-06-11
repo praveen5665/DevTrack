@@ -23,7 +23,7 @@ export function FocusTimer() {
   const [isRunning, setIsRunning] = useState(false);
   const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const hasLogged = useRef(false);
+  const lastLoggedMinuteRef = useRef(0);
 
   const activeTasks = tasks.filter((t) => t.status !== "DONE");
 
@@ -38,7 +38,7 @@ export function FocusTimer() {
     clearTimer();
     setIsRunning(false);
     setSecondsLeft(preset * 60);
-    hasLogged.current = false;
+    lastLoggedMinuteRef.current = 0;
   }, [preset, clearTimer]);
 
   useEffect(() => {
@@ -51,16 +51,17 @@ export function FocusTimer() {
         setSecondsLeft((prev) => prev - 1);
       }, 1000);
     }
+
+    const elapsed = preset * 60 - secondsLeft;
+    const currentMinute = Math.floor(elapsed / 60);
+    if (isRunning && currentMinute > lastLoggedMinuteRef.current) {
+      lastLoggedMinuteRef.current = currentMinute;
+      logSession({ taskId: selectedTaskId, durationMinutes: 1 });
+    }
+
     if (secondsLeft === 0 && isRunning) {
       setIsRunning(false);
       clearTimer();
-      if (!hasLogged.current) {
-        hasLogged.current = true;
-        logSession({
-          taskId: selectedTaskId,
-          durationMinutes: preset,
-        });
-      }
     }
     return clearTimer;
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -69,7 +70,7 @@ export function FocusTimer() {
   const handleStartPause = () => {
     if (secondsLeft === 0) {
       setSecondsLeft(preset * 60);
-      hasLogged.current = false;
+      lastLoggedMinuteRef.current = 0;
     }
     setIsRunning((prev) => !prev);
   };
