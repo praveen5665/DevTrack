@@ -51,51 +51,21 @@ export function TaskCard({ task }: TaskCardProps) {
   const isTaskToday = isToday(taskDate);
 
   return (
-    <div className="group flex items-center gap-3 rounded-lg border bg-card p-3 text-sm transition-colors hover:border-foreground/20">
-      <div className="flex flex-1 flex-col gap-1.5 min-w-0">
-        <span className="font-medium truncate">{task.title}</span>
-        <div className="flex flex-wrap items-center gap-1.5">
-          <Badge variant="outline" className={categoryColors[task.category]}>
-            {task.category === "SYSTEM_DESIGN" ? "SD" : task.category}
-          </Badge>
-          <Badge variant="outline" className={priorityColors[task.priority]}>
-            {task.priority}
-          </Badge>
-          {editingDate ? (
-            <Input
-              type="date"
-              defaultValue={dateToInputValue(taskDate)}
-              className="h-6 w-32 text-xs"
-              onBlur={(e) => {
-                if (e.target.value) {
-                  updateTaskDate(task.id, inputValueToDate(e.target.value));
-                }
-                setEditingDate(false);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") e.currentTarget.blur();
-                if (e.key === "Escape") setEditingDate(false);
-              }}
-              autoFocus
-            />
-          ) : (
-            <button
-              onClick={() => setEditingDate(true)}
-              className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-muted transition-colors"
-            >
-              <Calendar className="size-3" />
-              {isTaskToday ? "Today" : formatDate(taskDate)}
-            </button>
-          )}
-        </div>
-      </div>
+    <div className="group flex flex-col gap-1.5 rounded-lg border bg-card p-3 text-sm transition-colors hover:border-foreground/20">
+      <div className="font-medium">{task.title}</div>
 
-      <div className="flex items-center gap-1.5 shrink-0">
+      <div className="flex flex-wrap items-center gap-1.5">
+        <Badge variant="outline" className={categoryColors[task.category]}>
+          {task.category === "SYSTEM_DESIGN" ? "SD" : task.category}
+        </Badge>
+        <Badge variant="outline" className={priorityColors[task.priority]}>
+          {task.priority}
+        </Badge>
         <Select
           value={task.status}
           onValueChange={(v) => updateTaskStatus(task.id, v as Status)}
         >
-          <SelectTrigger className="h-7 w-32 text-xs" size="sm">
+          <SelectTrigger className="h-7 text-xs" size="sm">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -106,7 +76,6 @@ export function TaskCard({ task }: TaskCardProps) {
             ))}
           </SelectContent>
         </Select>
-
         <Button
           variant="ghost"
           size="icon-xs"
@@ -124,6 +93,33 @@ export function TaskCard({ task }: TaskCardProps) {
           <Trash2 className="size-3.5" />
         </Button>
       </div>
+
+      {editingDate ? (
+        <Input
+          type="date"
+          defaultValue={dateToInputValue(taskDate)}
+          className="h-6 w-32 text-xs"
+          onBlur={(e) => {
+            if (e.target.value) {
+              updateTaskDate(task.id, inputValueToDate(e.target.value));
+            }
+            setEditingDate(false);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") e.currentTarget.blur();
+            if (e.key === "Escape") setEditingDate(false);
+          }}
+          autoFocus
+        />
+      ) : (
+        <button
+          onClick={() => setEditingDate(true)}
+          className="inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs text-muted-foreground hover:bg-muted transition-colors w-fit"
+        >
+          <Calendar className="size-3" />
+          {isTaskToday ? "Today" : formatDate(taskDate)}
+        </button>
+      )}
 
       <EditTaskDialog
         task={task}

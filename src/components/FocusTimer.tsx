@@ -159,14 +159,16 @@ export function FocusTimer() {
 
       <div className="w-full max-w-xs">
         <Select
-          value={selectedTaskId ?? ""}
+          value={selectedTaskId}
           onValueChange={(v) => setSelectedTaskId(v || null)}
         >
           <SelectTrigger className="w-full text-xs">
             <SelectValue placeholder="Link to a task (optional)">
-              {selectedTaskId
-                ? activeTasks.find((t) => t.id === selectedTaskId)?.title
-                : ""}
+              {(value: string | null) => {
+                if (!value) return "Link to a task (optional)";
+                const task = activeTasks.find((t) => t.id === value);
+                return task?.title ?? value;
+              }}
             </SelectValue>
           </SelectTrigger>
           <SelectContent>
