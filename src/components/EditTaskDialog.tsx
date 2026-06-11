@@ -6,6 +6,7 @@ import {
   type Task,
   type Category,
   type Priority,
+  DEFAULT_CATEGORIES,
 } from "@/store/useAppStore";
 import { dateToInputValue, inputValueToDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -27,13 +28,12 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 
-const categories: { value: Category; label: string }[] = [
-  { value: "DSA", label: "DSA" },
-  { value: "LLD", label: "LLD" },
-  { value: "SYSTEM_DESIGN", label: "System Design" },
-  { value: "FUNDAMENTALS", label: "Fundamentals" },
-  { value: "PROJECT", label: "Project" },
-];
+const ADD_CUSTOM = "__add_custom__";
+
+function categoryLabel(value: string): string {
+  if (value === "SYSTEM_DESIGN") return "System Design";
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}
 
 const priorities: { value: Priority; label: string }[] = [
   { value: "P1", label: "P1 - Critical" },
@@ -56,6 +56,18 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
   const [category, setCategory] = useState<Category>(task.category);
   const [priority, setPriority] = useState<Priority>(task.priority);
   const [date, setDate] = useState(() => dateToInputValue(taskDate));
+
+  const handleCategoryChange = (v: string | null) => {
+    if (!v) return;
+    if (v === ADD_CUSTOM) {
+      const name = window.prompt("Custom category name:");
+      if (name?.trim()) {
+        setCategory(name.trim());
+      }
+      return;
+    }
+    setCategory(v);
+  };
 
   const handleSave = () => {
     if (!title.trim()) return;
@@ -88,16 +100,17 @@ export function EditTaskDialog({ task, open, onOpenChange }: EditTaskDialogProps
           <div className="grid grid-cols-3 gap-2">
             <div>
               <label className="mb-1 block text-xs text-muted-foreground">Category</label>
-              <Select value={category} onValueChange={(v) => setCategory(v as Category)}>
+              <Select value={category} onValueChange={handleCategoryChange}>
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  {categories.map((c) => (
-                    <SelectItem key={c.value} value={c.value}>
-                      {c.label}
+                  {DEFAULT_CATEGORIES.map((c) => (
+                    <SelectItem key={c} value={c}>
+                      {categoryLabel(c)}
                     </SelectItem>
                   ))}
+                  <SelectItem value={ADD_CUSTOM}>+ Add custom...</SelectItem>
                 </SelectContent>
               </Select>
             </div>

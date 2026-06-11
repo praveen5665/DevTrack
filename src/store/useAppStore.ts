@@ -3,9 +3,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-export type Category = "DSA" | "LLD" | "SYSTEM_DESIGN" | "FUNDAMENTALS" | "PROJECT";
+export type Category = string;
 export type Priority = "P1" | "P2" | "P3" | "P4";
 export type Status = "TODO" | "IN_PROGRESS" | "DONE";
+
+export const DEFAULT_CATEGORIES = ["DSA", "LLD", "SYSTEM_DESIGN", "FUNDAMENTALS", "PROJECT"] as const;
 
 export interface Task {
   id: string;

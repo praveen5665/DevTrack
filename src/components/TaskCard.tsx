@@ -16,7 +16,7 @@ import {
 import { EditTaskDialog } from "@/components/EditTaskDialog";
 import { Trash2, Calendar, Pencil, Timer } from "lucide-react";
 
-const categoryColors: Record<Task["category"], string> = {
+const categoryColors: Record<string, string> = {
   DSA: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-200 dark:border-blue-800",
   LLD: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border-purple-200 dark:border-purple-800",
   SYSTEM_DESIGN:
@@ -26,6 +26,8 @@ const categoryColors: Record<Task["category"], string> = {
   PROJECT:
     "bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 border-cyan-200 dark:border-cyan-800",
 };
+
+const defaultCategoryColor = "bg-gray-500/10 text-gray-600 dark:text-gray-400 border-gray-200 dark:border-gray-700";
 
 const priorityColors: Record<Task["priority"], string> = {
   P1: "bg-red-500/10 text-red-600 dark:text-red-400 border-red-200 dark:border-red-800",
@@ -80,7 +82,7 @@ export function TaskCard({ task }: TaskCardProps) {
       <div className="font-medium">{task.title}</div>
 
       <div className="flex flex-wrap items-center gap-1.5">
-        <Badge variant="outline" className={categoryColors[task.category]}>
+        <Badge variant="outline" className={categoryColors[task.category] ?? defaultCategoryColor}>
           {task.category === "SYSTEM_DESIGN" ? "SD" : task.category}
         </Badge>
         <Badge variant="outline" className={priorityColors[task.priority]}>

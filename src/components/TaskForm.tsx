@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useAppStore, type Category, type Priority } from "@/store/useAppStore";
+import { useAppStore, type Category, type Priority, DEFAULT_CATEGORIES } from "@/store/useAppStore";
 import { startOfDay, dateToInputValue, inputValueToDate } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,13 +14,12 @@ import {
 } from "@/components/ui/select";
 import { Plus } from "lucide-react";
 
-const categories: { value: Category; label: string }[] = [
-  { value: "DSA", label: "DSA" },
-  { value: "LLD", label: "LLD" },
-  { value: "SYSTEM_DESIGN", label: "System Design" },
-  { value: "FUNDAMENTALS", label: "Fundamentals" },
-  { value: "PROJECT", label: "Project" },
-];
+const ADD_CUSTOM = "__add_custom__";
+
+function categoryLabel(value: string): string {
+  if (value === "SYSTEM_DESIGN") return "System Design";
+  return value.charAt(0).toUpperCase() + value.slice(1).toLowerCase();
+}
 
 const priorities: { value: Priority; label: string }[] = [
   { value: "P1", label: "P1 - Critical" },
@@ -35,6 +34,18 @@ export function TaskForm() {
   const [category, setCategory] = useState<Category>("DSA");
   const [priority, setPriority] = useState<Priority>("P3");
   const [date, setDate] = useState(() => dateToInputValue(startOfDay(Date.now())));
+
+  const handleCategoryChange = (v: string | null) => {
+    if (!v) return;
+    if (v === ADD_CUSTOM) {
+      const name = window.prompt("Custom category name:");
+      if (name?.trim()) {
+        setCategory(name.trim());
+      }
+      return;
+    }
+    setCategory(v);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -61,17 +72,18 @@ export function TaskForm() {
       </div>
       <Select
         value={category}
-        onValueChange={(v) => setCategory(v as Category)}
+        onValueChange={handleCategoryChange}
       >
         <SelectTrigger className="w-28">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
-          {categories.map((c) => (
-            <SelectItem key={c.value} value={c.value}>
-              {c.label}
+          {DEFAULT_CATEGORIES.map((c) => (
+            <SelectItem key={c} value={c}>
+              {categoryLabel(c)}
             </SelectItem>
           ))}
+          <SelectItem value={ADD_CUSTOM}>+ Add custom...</SelectItem>
         </SelectContent>
       </Select>
       <Select
